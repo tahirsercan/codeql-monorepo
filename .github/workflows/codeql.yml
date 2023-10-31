@@ -56,10 +56,15 @@ jobs:
           languages+=('python')
         fi
 
+        echo "languages_length=${#languages[@]}"
+        echo "languages=${languages[@]}"
+
         languages_str=$(IFS=,; echo "${languages[*]}")
 
+        echo "languages_str=${languages_str}"
+
         echo "languages_length=${#languages[@]}" >> $GITHUB_STATE
-        echo "languages=[$languages_str]" >> $GITHUB_STATE
+        echo "languages=[${languages_str}]" >> $GITHUB_STATE
 
   print:
     runs-on: ubuntu-latest
@@ -71,8 +76,8 @@ jobs:
 
   analyze:
     name: Analyze
-    if: ${{ needs.changes.outputs.languages_length > 0 }}
     needs: changes # <== REQUIRED
+    if: ${{ needs.changes.outputs.languages_length > 0 }}
     # Runner size impacts CodeQL analysis time. To learn more, please see:
     #   - https://gh.io/recommended-hardware-resources-for-running-codeql
     #   - https://gh.io/supported-runners-and-hardware-resources
