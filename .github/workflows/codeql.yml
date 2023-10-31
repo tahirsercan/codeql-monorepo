@@ -55,8 +55,11 @@ jobs:
         if [ -n "${{ steps.filter.outputs.advanced-security-python }}" ]; then
           languages+=('python')
         fi
-        echo $languages
-        echo "::set-output name=languages::$languages"
+
+        languages_str=$(IFS=,; echo "${languages[*]}")
+
+        echo $languages_str
+        echo "::set-output name=languages::$languages_str"
 
   print-changes:
     runs-on: ubuntu-latest
