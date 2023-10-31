@@ -83,8 +83,8 @@ jobs:
     #   - https://gh.io/supported-runners-and-hardware-resources
     #   - https://gh.io/using-larger-runners
     # Consider using larger runners for possible analysis time improvements.
-    runs-on: ${{ (fromJson(matrix.project).languages[0] == 'swift' && 'macos-latest') || 'ubuntu-latest' }}
-    timeout-minutes: ${{ (fromJson(matrix.project).languages[0] == 'swift' && 120) || 360 }}
+    runs-on: ${{ (matrix.project.languages[0] == 'swift' && 'macos-latest') || 'ubuntu-latest' }}
+    timeout-minutes: ${{ (matrix.project.languages[0] == 'swift' && 120) || 360 }}
     permissions:
       actions: read
       contents: read
