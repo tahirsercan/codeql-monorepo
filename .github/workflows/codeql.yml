@@ -60,6 +60,9 @@ jobs:
           if (filter['advanced-security-python'] === 'true') {
             languages.push('python')
           }
+
+          console.log(languages);
+
           return {
             languages: languages.join(','),
             languages_length: languages.length
