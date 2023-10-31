@@ -62,7 +62,7 @@ jobs:
               path: 'advanced-security-go'
             }
           }
-          if (filter['advanced-security-python'] === 'true') {
+          if (1 || filter['advanced-security-python'] === 'true') {
             projects['advanced-security-python'] = {
               languages: ['python'],
               path: 'advanced-security-python'
