@@ -54,7 +54,7 @@ jobs:
         if [ -n "${{ steps.filter.outputs.frontend }}" ]; then
           languages+=('javascript-typescript')
         fi
-        echo "::set-output name=languages::languages"
+        echo "::set-output name=languages::$languages"
 
   print-changes:
     runs-on: ubuntu-latest
