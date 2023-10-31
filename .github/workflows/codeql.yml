@@ -63,7 +63,7 @@ jobs:
           console.log(languages);
 
           return {
-            languages: languages.join(','),
+            languages,
             languages_length: languages.length
           }
 
@@ -72,6 +72,8 @@ jobs:
     needs: changes
     steps:
     - run: echo "${{ toJson(needs.changes.outputs) }}"
+    - run: echo "${{ needs.changes.outputs.languages.languages }}"
+    - run: echo "${{ toJson(needs.changes.outputs).languages.languages }}"
 
   analyze:
     name: Analyze
