@@ -43,7 +43,7 @@ jobs:
             - 'advanced-security-go/**'
           advanced-security-python:
             - 'advanced-security-python/**'
-    - uses: actions/github-script
+    - uses: actions/github-script@v4
       id: build-languages
       env:
         filter: ${{ toJson(steps.filter.outputs) }}
@@ -69,8 +69,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: changes
     steps:
-    - run: |
-        echo "${{ toJson(needs.changes.outputs) }}"
+    - run: echo "${{ toJson(needs.changes.outputs) }}"
 
   analyze:
     name: Analyze
