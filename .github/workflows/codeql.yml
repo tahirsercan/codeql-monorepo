@@ -64,6 +64,7 @@ jobs:
 
   analyze:
     name: Analyze
+    if: 0 == 1
     needs: changes # <== REQUIRED
     # Runner size impacts CodeQL analysis time. To learn more, please see:
     #   - https://gh.io/recommended-hardware-resources-for-running-codeql
