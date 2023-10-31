@@ -112,6 +112,7 @@ jobs:
       uses: github/codeql-action/init@v2
       with:
         languages: ${{ join(matrix.project.languages, ',') }}
+        # The "paths"/"paths-ignore" fields of the config only have effect for JavaScript, Python, and Ruby
         config: |
           paths:
             - '${{ matrix.project.path }}'
