@@ -46,13 +46,14 @@ jobs:
       id: build-language-array
       run: |
         languages=()
-        if [ -n "${{ steps.filter.outputs.backend }}" ]; then
+        if [ -n "${{ steps.filter.outputs.advanced-security-csharp }}" ]; then
           languages+=('csharp')
-          languages+=('go')
-          languages+=('python')
         fi
-        if [ -n "${{ steps.filter.outputs.frontend }}" ]; then
-          languages+=('javascript-typescript')
+        if [ -n "${{ steps.filter.outputs.advanced-security-go }}" ]; then
+          languages+=('go')
+        fi
+        if [ -n "${{ steps.filter.outputs.advanced-security-python }}" ]; then
+          languages+=('python')
         fi
         echo $languages
         echo "::set-output name=languages::$languages"
