@@ -29,7 +29,7 @@ jobs:
       advanced-security-csharp: ${{ steps.filter.outputs.advanced-security-csharp }}
       advanced-security-go: ${{ steps.filter.outputs.advanced-security-go }}
       advanced-security-python: ${{ steps.filter.outputs.advanced-security-python }}
-      languages: ${{ steps.build-languages.outputs.languages }}
+      languages: ${{ steps.build-languages.outputs.result.languages }}
       languages_length: ${{ steps.build-languages.outputs.languages_length }}
     steps:
     - uses: actions/checkout@v3
@@ -44,27 +44,26 @@ jobs:
           advanced-security-python:
             - 'advanced-security-python/**'
     - id: build-languages
-      run: |
-        languages=()
-        if [ "${{ steps.filter.outputs.advanced-security-csharp }}" = "true" ]; then
-          languages+=('csharp')
-        fi
-        if [ "${{ steps.filter.outputs.advanced-security-go }}" == "true" ]; then
-          languages+=('go')
-        fi
-        if [ "${{ steps.filter.outputs.advanced-security-python }}" = "true" ]; then
-          languages+=('python')
-        fi
-
-        if [ ${#languages[@]} -eq 0 ]; then
-          languages_str=""
-        else
-          languages_str=$(IFS=,; echo "${languages[*]}")
-        fi
-        
-        echo "::set-output name=languages::${languages_str}"
-        echo "::set-output name=languages_length::${#languages[@]}"
-    - run: echo "${{ toJson(steps.build-languages.outputs) }}"
+      uses: actions/github-script
+      env:
+        filter: ${{ toJson(steps.filter.outputs) }}
+      with:
+        script: |
+          const languages = []
+          const filter = JSON.parse(process.env.filter)
+          if (filter['advanced-security-csharp'] === 'true') {
+            languages.push('csharp')
+          }
+          if (filter['advanced-security-go'] === 'true') {
+            languages.push('go')
+          }
+          if (filter['advanced-security-python'] === 'true') {
+            languages.push('python')
+          }
+          return {
+            languages: languages.join(','),
+            languages_length: languages.length
+          }
 
   print:
     runs-on: ubuntu-latest
