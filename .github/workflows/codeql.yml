@@ -29,7 +29,7 @@ jobs:
       advanced-security-csharp: ${{ steps.filter.outputs.advanced-security-csharp }}
       advanced-security-go: ${{ steps.filter.outputs.advanced-security-go }}
       advanced-security-python: ${{ steps.filter.outputs.advanced-security-python }}
-      languages: ${{ steps.build-languages.outputs.result }}
+      projects: ${{ steps.build-languages.outputs.result }}
     steps:
     - uses: actions/checkout@v3
     - uses: dorny/paths-filter@v2
@@ -48,47 +48,43 @@ jobs:
         filter: ${{ toJson(steps.filter.outputs) }}
       with:
         script: |
-          const languages = []
+          const projects = [];
           const filter = JSON.parse(process.env.filter)
           if (filter['advanced-security-csharp'] === 'true') {
-            languages.push('csharp')
+            projects['advanced-security-csharp'] = {
+              languages: ['csharp']
+              path: 'advanced-security-csharp'
+            }
           }
           if (filter['advanced-security-go'] === 'true') {
-            languages.push('go')
+            projects['advanced-security-go'] = {
+              languages: ['go']
+              path: 'advanced-security-go'
+            }
           }
           if (filter['advanced-security-python'] === 'true') {
-            languages.push('python')
+            projects['advanced-security-python'] = {
+              languages: ['python']
+              path: 'advanced-security-python'
+            }
           }
-
-          console.log(languages);
 
           return {
-            languages,
-            languages_length: languages.length
+            projects,
+            length: languages.length
           }
-
-  print:
-    runs-on: ubuntu-latest
-    needs: changes
-    steps:
-    - run: echo "${{ toJson(needs.changes.outputs) }}"
-    - run: echo "${{ needs.changes.outputs.languages }}"
-    - run: echo "${{ toJson(needs.changes.outputs.languages).languages }}"
-    - run: echo "${{ toJson(needs.changes.outputs.languages).languages_length }}"
-    - run: echo "${{ fromJson(needs.changes.outputs.languages).languages }}"
-    - run: echo "${{ fromJson(needs.changes.outputs.languages).languages_length }}"
 
   analyze:
     name: Analyze
     needs: changes # <== REQUIRED
-    if: ${{ fromJson(needs.changes.outputs.languages).languages_length > 0 }}
+    if: ${{ fromJson(needs.changes.outputs.projects).length > 0 }}
     # Runner size impacts CodeQL analysis time. To learn more, please see:
     #   - https://gh.io/recommended-hardware-resources-for-running-codeql
     #   - https://gh.io/supported-runners-and-hardware-resources
     #   - https://gh.io/using-larger-runners
     # Consider using larger runners for possible analysis time improvements.
-    runs-on: ${{ (matrix.language == 'swift' && 'macos-latest') || 'ubuntu-latest' }}
-    timeout-minutes: ${{ (matrix.language == 'swift' && 120) || 360 }}
+    runs-on: ${{ (fromJson(matrix.project).languages[0] == 'swift' && 'macos-latest') || 'ubuntu-latest' }}
+    timeout-minutes: ${{ (fromJson(matrix.project).languages[0] == 'swift' && 120) || 360 }}
     permissions:
       actions: read
       contents: read
@@ -97,13 +93,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: ${{ fromJson(needs.changes.outputs.languages).languages }}
+        project: ${{ fromJson(needs.changes.outputs.projects).projects }}
         # CodeQL supports [ 'c-cpp', 'csharp', 'go', 'java-kotlin', 'javascript-typescript', 'python', 'ruby', 'swift' ]
         # Use only 'java-kotlin' to analyze code written in Java, Kotlin or both
         # Use only 'javascript-typescript' to analyze code written in JavaScript, TypeScript or both
         # Learn more about CodeQL language support at https://aka.ms/codeql-docs/language-support
 
     steps:
+    - name: Print
+      run: echo ${{ matrix.project }}
+
     - name: Checkout repository
       uses: actions/checkout@v3
 
@@ -111,7 +110,8 @@ jobs:
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v2
       with:
-        languages: ${{ matrix.language }}
+        languages: ${{ fromJson(matrix.project).languages }}
+        source-root: ${{ fromJson(matrix.project).path }}
         # If you wish to specify custom queries, you can do so here or in a config file.
         # By default, queries listed here will override any specified in a config file.
         # Prefix the list here with "+" to use these queries and those in the config file.
