@@ -73,8 +73,10 @@ jobs:
     steps:
     - run: echo "${{ toJson(needs.changes.outputs) }}"
     - run: echo "${{ needs.changes.outputs.languages }}"
-    - run: echo "${{ fromJson(needs.changes.outputs).languages }}"
-    - run: echo "${{ fromJson(needs.changes.outputs).languages_length }}"
+    - run: echo "${{ toJson(needs.changes.outputs.languages).languages }}"
+    - run: echo "${{ toJson(needs.changes.outputs.languages).languages_length }}"
+    - run: echo "${{ fromJson(needs.changes.outputs.languages).languages }}"
+    - run: echo "${{ fromJson(needs.changes.outputs.languages).languages_length }}"
 
   analyze:
     name: Analyze
