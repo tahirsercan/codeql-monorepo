@@ -21,8 +21,49 @@ on:
     - cron: '39 18 * * 6'
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+      languages: ${{ steps.build-language-array.outputs.languages }}
+    steps:
+    - uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        filters: |
+          advanced-security-csharp:
+            - 'advanced-security-csharp/**'
+          advanced-security-go:
+            - 'advanced-security-go/**'
+          advanced-security-python:
+            - 'advanced-security-python/**'
+    ## build a JSON array of languages to run CodeQL on
+    - name: Build language array
+      id: build-language-array
+      run: |
+        languages=()
+        if [ -n "${{ steps.filter.outputs.backend }}" ]; then
+          languages+=('csharp')
+          languages+=('go')
+          languages+=('python')
+        fi
+        if [ -n "${{ steps.filter.outputs.frontend }}" ]; then
+          languages+=('javascript-typescript')
+        fi
+        echo "::set-output name=languages::languages"
+
+  print-changes:
+    runs-on: ubuntu-latest
+    needs: changes
+    steps:
+      - run: echo ${{ needs.changes.outputs.languages }}
+
   analyze:
     name: Analyze
+    needs: changes # <== REQUIRED
     # Runner size impacts CodeQL analysis time. To learn more, please see:
     #   - https://gh.io/recommended-hardware-resources-for-running-codeql
     #   - https://gh.io/supported-runners-and-hardware-resources
