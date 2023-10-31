@@ -61,6 +61,14 @@ jobs:
         echo "languages_length=${#languages[@]}" >> $GITHUB_STATE
         echo "languages=[$languages_str]" >> $GITHUB_STATE
 
+  print:
+    runs-on: ubuntu-latest
+    needs: changes
+    steps:
+    - run: |
+        echo "languages_length=${{ needs.changes.outputs.languages_length }}"
+        echo "languages=${{ needs.changes.outputs.languages }}"
+
   analyze:
     name: Analyze
     if: ${{ needs.changes.outputs.languages_length > 0 }}
