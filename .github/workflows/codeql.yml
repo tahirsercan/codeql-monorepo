@@ -53,24 +53,39 @@ jobs:
           const changes = JSON.parse(filter.changes)
           console.log(filter)
           console.log(changes)
-          if (filter['advanced-security-csharp'] === 'true') {
-            projects.push({
-              languages: ['csharp'],
-              path: 'advanced-security-csharp'
-            });
+          const config = {
+            go: [
+              'advanced-security-go'
+            ],
+            python: [
+              'advanced-security-python'
+            ],
+            csharp: [
+              'advanced-security-csharp'
+            ],
+            java: [
+              'advanced-security-java'
+            ],
+            javascript: [
+              'advanced-security-javascript'
+            ],
+            typescript: [
+              'advanced-security-typescript'
+            ],
+            ruby: [
+              'advanced-security-ruby'
+            ],
+            swift: [],
+            c-cpp: [],
           }
-          if (filter['advanced-security-go'] === 'true') {
+
+          changes.map((change) => {
+            const languages = Object.keys(config).filter(key => config[key].includes(path))
             projects.push({
-              languages: ['go'],
-              path: 'advanced-security-go'
-            });
-          }
-          if (filter['advanced-security-python'] === 'true') {
-            projects.push({
-              languages: ['python'],
-              path: 'advanced-security-python'
-            });
-          }
+              languages,
+              path
+            })
+          })
 
           return {
             projects,
