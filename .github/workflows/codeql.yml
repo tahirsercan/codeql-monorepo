@@ -29,6 +29,7 @@ jobs:
       backend: ${{ steps.filter.outputs.backend }}
       frontend: ${{ steps.filter.outputs.frontend }}
       languages: ${{ steps.build-language-array.outputs.languages }}
+      languages_length: ${{ steps.build-language-array.outputs.languages_length }}
     steps:
     - uses: actions/checkout@v3
     - uses: dorny/paths-filter@v2
