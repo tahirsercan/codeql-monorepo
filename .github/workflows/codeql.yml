@@ -48,25 +48,25 @@ jobs:
         filter: ${{ toJson(steps.filter.outputs) }}
       with:
         script: |
-          const projects = {};
+          const projects = [];
           const filter = JSON.parse(process.env.filter)
           if (filter['advanced-security-csharp'] === 'true') {
-            projects['advanced-security-csharp'] = {
+            projects.push({
               languages: ['csharp'],
               path: 'advanced-security-csharp'
-            }
+            });
           }
           if (filter['advanced-security-go'] === 'true') {
-            projects['advanced-security-go'] = {
+            projects.push({
               languages: ['go'],
               path: 'advanced-security-go'
-            }
+            });
           }
           if (1 || filter['advanced-security-python'] === 'true') {
-            projects['advanced-security-python'] = {
+            projects.push({
               languages: ['python'],
               path: 'advanced-security-python'
-            }
+            });
           }
 
           return {
@@ -93,7 +93,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        project: ${{ toJson(fromJson(needs.changes.outputs.projects).projects) }}
+        project: ${{ fromJson(needs.changes.outputs.projects).projects }}
         # CodeQL supports [ 'c-cpp', 'csharp', 'go', 'java-kotlin', 'javascript-typescript', 'python', 'ruby', 'swift' ]
         # Use only 'java-kotlin' to analyze code written in Java, Kotlin or both
         # Use only 'javascript-typescript' to analyze code written in JavaScript, TypeScript or both
