@@ -43,8 +43,8 @@ jobs:
             - 'advanced-security-go/**'
           advanced-security-python:
             - 'advanced-security-python/**'
-    - id: build-languages
-      uses: actions/github-script
+    - uses: actions/github-script
+      id: build-languages
       env:
         filter: ${{ toJson(steps.filter.outputs) }}
       with:
