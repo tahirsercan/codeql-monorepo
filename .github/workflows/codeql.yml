@@ -29,8 +29,7 @@ jobs:
       advanced-security-csharp: ${{ steps.filter.outputs.advanced-security-csharp }}
       advanced-security-go: ${{ steps.filter.outputs.advanced-security-go }}
       advanced-security-python: ${{ steps.filter.outputs.advanced-security-python }}
-      languages: ${{ fromJson(steps.build-languages.outputs.result).languages }}
-      languages_length: ${{ fromJson(steps.build-languages.outputs.result).languages_length }}
+      languages: ${{ fromJson(steps.build-languages.outputs.result) }}
     steps:
     - uses: actions/checkout@v3
     - uses: dorny/paths-filter@v2
@@ -77,7 +76,7 @@ jobs:
   analyze:
     name: Analyze
     needs: changes # <== REQUIRED
-    if: ${{ needs.changes.outputs.languages_length > 0 }}
+    if: ${{ fromJson(needs.changes.outputs.languages).languages_length > 0 }}
     # Runner size impacts CodeQL analysis time. To learn more, please see:
     #   - https://gh.io/recommended-hardware-resources-for-running-codeql
     #   - https://gh.io/supported-runners-and-hardware-resources
@@ -93,7 +92,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: ${{ fromJson(needs.changes.outputs.languages) }}
+        language: ${{ fromJson(needs.changes.outputs.languages).languages }}
         # CodeQL supports [ 'c-cpp', 'csharp', 'go', 'java-kotlin', 'javascript-typescript', 'python', 'ruby', 'swift' ]
         # Use only 'java-kotlin' to analyze code written in Java, Kotlin or both
         # Use only 'javascript-typescript' to analyze code written in JavaScript, TypeScript or both
