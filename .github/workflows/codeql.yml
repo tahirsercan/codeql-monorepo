@@ -29,8 +29,8 @@ jobs:
       advanced-security-csharp: ${{ steps.filter.outputs.advanced-security-csharp }}
       advanced-security-go: ${{ steps.filter.outputs.advanced-security-go }}
       advanced-security-python: ${{ steps.filter.outputs.advanced-security-python }}
-      languages: ${{ toJson(steps.build-languages.outputs.result).languages }}
-      languages_length: ${{ toJson(steps.build-languages.outputs.result).languages_length }}
+      languages: ${{ fromJson(steps.build-languages.outputs.result).languages }}
+      languages_length: ${{ fromJson(steps.build-languages.outputs.result).languages_length }}
     steps:
     - uses: actions/checkout@v3
     - uses: dorny/paths-filter@v2
