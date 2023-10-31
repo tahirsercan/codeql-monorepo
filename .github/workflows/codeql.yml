@@ -50,6 +50,7 @@ jobs:
         script: |
           const projects = [];
           const filter = JSON.parse(process.env.filter)
+          console.log(filter)
           if (filter['advanced-security-csharp'] === 'true') {
             projects.push({
               languages: ['csharp'],
