@@ -48,30 +48,30 @@ jobs:
         filter: ${{ toJson(steps.filter.outputs) }}
       with:
         script: |
-          const projects = [];
+          const projects = {};
           const filter = JSON.parse(process.env.filter)
           if (filter['advanced-security-csharp'] === 'true') {
             projects['advanced-security-csharp'] = {
-              languages: ['csharp']
+              languages: ['csharp'],
               path: 'advanced-security-csharp'
             }
           }
           if (filter['advanced-security-go'] === 'true') {
             projects['advanced-security-go'] = {
-              languages: ['go']
+              languages: ['go'],
               path: 'advanced-security-go'
             }
           }
           if (filter['advanced-security-python'] === 'true') {
             projects['advanced-security-python'] = {
-              languages: ['python']
+              languages: ['python'],
               path: 'advanced-security-python'
             }
           }
 
           return {
             projects,
-            length: languages.length
+            length: Object.keys(projects).length
           }
 
   analyze:
