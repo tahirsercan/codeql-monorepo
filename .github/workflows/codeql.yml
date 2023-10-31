@@ -57,9 +57,9 @@ jobs:
         fi
 
         languages_str=$(IFS=,; echo "${languages[*]}")
-
-        echo "languages_length=${#languages[@]}" >> $GITHUB_STATE
-        echo "languages=[${languages_str}]" >> $GITHUB_STATE
+        
+        echo "::set-output name=languages::${languages_str}"
+        echo "::set-output name=languages_length::${#languages[@]}"
     - run: echo "${{ toJson(steps.build-languages.outputs) }}"
 
   print:
