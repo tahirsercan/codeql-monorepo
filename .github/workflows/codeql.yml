@@ -30,7 +30,7 @@ jobs:
       advanced-security-go: ${{ steps.filter.outputs.advanced-security-go }}
       advanced-security-python: ${{ steps.filter.outputs.advanced-security-python }}
       languages: ${{ steps.build-languages.outputs.result.languages }}
-      languages_length: ${{ steps.build-languages.outputs.languages_length }}
+      languages_length: ${{ steps.build-languages.outputs.result.languages_length }}
     steps:
     - uses: actions/checkout@v3
     - uses: dorny/paths-filter@v2
