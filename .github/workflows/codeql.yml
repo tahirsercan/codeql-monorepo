@@ -58,8 +58,8 @@ jobs:
 
         languages_str=$(IFS=,; echo "${languages[*]}")
 
-        echo "::set-output name=languages_length::${#languages[@]}"
-        echo "::set-output name=languages::[$languages_str]"
+        echo "languages_length=${#languages[@]}" >> $GITHUB_STATE
+        echo "languages=[$languages_str]" >> $GITHUB_STATE
 
   analyze:
     name: Analyze
