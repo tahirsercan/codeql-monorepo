@@ -26,10 +26,11 @@ jobs:
     permissions:
       pull-requests: read
     outputs:
-      backend: ${{ steps.filter.outputs.backend }}
-      frontend: ${{ steps.filter.outputs.frontend }}
-      languages: ${{ steps.build-language-array.outputs.languages }}
-      languages_length: ${{ steps.build-language-array.outputs.languages_length }}
+      advanced-security-csharp: ${{ steps.filter.outputs.advanced-security-csharp }}
+      advanced-security-go: ${{ steps.filter.outputs.advanced-security-go }}
+      advanced-security-python: ${{ steps.filter.outputs.advanced-security-python }}
+      languages: ${{ steps.languages.outputs.languages }}
+      languages_length: ${{ steps.languages.outputs.languages_length }}
     steps:
     - uses: actions/checkout@v3
     - uses: dorny/paths-filter@v2
@@ -42,9 +43,7 @@ jobs:
             - 'advanced-security-go/**'
           advanced-security-python:
             - 'advanced-security-python/**'
-    ## build a JSON array of languages to run CodeQL on
-    - name: Build language array
-      id: build-language-array
+    - id: languages
       run: |
         languages=()
         if [ "${{ steps.filter.outputs.advanced-security-csharp }}" = "true" ]; then
@@ -57,12 +56,10 @@ jobs:
           languages+=('python')
         fi
 
-        echo "languages_length=${#languages[@]}"
-        echo "languages=${languages[@]}"
-
         languages_str=$(IFS=,; echo "${languages[*]}")
 
-        echo "languages_str=${languages_str}"
+        echo "languages_length=${#languages[@]}"
+        echo "languages=[${languages_str}]"
 
         echo "languages_length=${#languages[@]}" >> $GITHUB_STATE
         echo "languages=[${languages_str}]" >> $GITHUB_STATE
