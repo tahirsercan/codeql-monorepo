@@ -72,8 +72,9 @@ jobs:
     needs: changes
     steps:
     - run: echo "${{ toJson(needs.changes.outputs) }}"
-    - run: echo "${{ needs.changes.outputs.languages.languages }}"
-    - run: echo "${{ toJson(needs.changes.outputs).languages.languages }}"
+    - run: echo "${{ needs.changes.outputs.languages }}"
+    - run: echo "${{ fromJson(needs.changes.outputs).languages }}"
+    - run: echo "${{ fromJson(needs.changes.outputs).languages_length }}"
 
   analyze:
     name: Analyze
