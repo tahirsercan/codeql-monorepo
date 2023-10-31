@@ -29,8 +29,8 @@ jobs:
       advanced-security-csharp: ${{ steps.filter.outputs.advanced-security-csharp }}
       advanced-security-go: ${{ steps.filter.outputs.advanced-security-go }}
       advanced-security-python: ${{ steps.filter.outputs.advanced-security-python }}
-      languages: ${{ steps.languages.outputs.languages }}
-      languages_length: ${{ steps.languages.outputs.languages_length }}
+      languages: ${{ steps.build-languages.outputs.languages }}
+      languages_length: ${{ steps.build-languages.outputs.languages_length }}
     steps:
     - uses: actions/checkout@v3
     - uses: dorny/paths-filter@v2
@@ -43,7 +43,7 @@ jobs:
             - 'advanced-security-go/**'
           advanced-security-python:
             - 'advanced-security-python/**'
-    - id: languages
+    - id: build-languages
       run: |
         languages=()
         if [ "${{ steps.filter.outputs.advanced-security-csharp }}" = "true" ]; then
@@ -58,11 +58,9 @@ jobs:
 
         languages_str=$(IFS=,; echo "${languages[*]}")
 
-        echo "languages_length=${#languages[@]}"
-        echo "languages=[${languages_str}]"
-
         echo "languages_length=${#languages[@]}" >> $GITHUB_STATE
         echo "languages=[${languages_str}]" >> $GITHUB_STATE
+    - run: echo "${{ toJson(steps.build-languages.outputs) }}"
 
   print:
     runs-on: ubuntu-latest
