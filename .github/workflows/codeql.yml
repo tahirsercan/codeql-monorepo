@@ -42,6 +42,10 @@ jobs:
             - 'advanced-security-go/**'
           advanced-security-python:
             - 'advanced-security-python/**'
+          advanced-security-java:
+            - 'advanced-security-java/**'
+          advanced-security-javascript:
+            - 'advanced-security-javascript/**'
     - uses: actions/github-script@v6
       id: build-languages
       env:
