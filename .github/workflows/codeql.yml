@@ -58,18 +58,12 @@ jobs:
 
         languages_str=$(IFS=,; echo "${languages[*]}")
 
-        echo $languages_str
-        echo "::set-output name=languages::$languages_str"
-
-  print-changes:
-    runs-on: ubuntu-latest
-    needs: changes
-    steps:
-      - run: echo ${{ toJson(needs.changes.outputs.languages) }}
+        echo "::set-output name=length::${#languages[@]}"
+        echo "::set-output name=languages::[$languages_str]"
 
   analyze:
     name: Analyze
-    if: 0 == 1
+    if: ${{ fromJson(needs.changes.outputs.languages).length > 0 }}
     needs: changes # <== REQUIRED
     # Runner size impacts CodeQL analysis time. To learn more, please see:
     #   - https://gh.io/recommended-hardware-resources-for-running-codeql
