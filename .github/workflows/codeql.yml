@@ -48,6 +48,7 @@ jobs:
         filter: ${{ steps.filter.outputs.changed_files }}
       with:
         script: |
+          console.log(process.env.filter)
           const projects = [];
           const filter = JSON.parse(process.env.filter)
           if (filter.includes('advanced-security-csharp')) {
