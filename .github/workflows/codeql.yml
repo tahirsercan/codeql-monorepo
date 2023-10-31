@@ -45,25 +45,24 @@ jobs:
     - uses: actions/github-script@v6
       id: build-languages
       env:
-        filter: ${{ steps.filter.outputs.changed_files }}
+        filter: ${{ toJson(steps.filter.outputs) }}
       with:
         script: |
-          console.log(process.env.filter)
           const projects = [];
           const filter = JSON.parse(process.env.filter)
-          if (filter.includes('advanced-security-csharp')) {
+          if (filter['advanced-security-csharp'] === 'true') {
             projects.push({
               languages: ['csharp'],
               path: 'advanced-security-csharp'
             });
           }
-          if (filter.includes('advanced-security-go')) {
+          if (filter['advanced-security-go'] === 'true') {
             projects.push({
               languages: ['go'],
               path: 'advanced-security-go'
             });
           }
-          if (filter.includes('advanced-security-python')) {
+          if (filter['advanced-security-python'] === 'true') {
             projects.push({
               languages: ['python'],
               path: 'advanced-security-python'
@@ -72,7 +71,7 @@ jobs:
 
           return {
             projects,
-            length: projects.length
+            length: Object.keys(projects).length
           }
 
   analyze:
