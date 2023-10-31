@@ -56,7 +56,11 @@ jobs:
           languages+=('python')
         fi
 
-        languages_str=$(IFS=,; echo "${languages[*]}")
+        if [ ${#languages[@]} -eq 0 ]; then
+          languages_str=""
+        else
+          languages_str=$(IFS=,; echo "${languages[*]}")
+        fi
         
         echo "::set-output name=languages::${languages_str}"
         echo "::set-output name=languages_length::${#languages[@]}"
