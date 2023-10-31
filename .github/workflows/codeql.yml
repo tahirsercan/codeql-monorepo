@@ -101,7 +101,7 @@ jobs:
 
     steps:
     - name: Print
-      run: echo ${{ fromJson(matrix.project) }}
+      run: echo "${{ toJson(matrix.project) }}"
 
     - name: Checkout repository
       uses: actions/checkout@v3
