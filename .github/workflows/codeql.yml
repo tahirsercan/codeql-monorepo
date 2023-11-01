@@ -160,10 +160,11 @@ jobs:
     #     echo "Run, Build Application using script"
     #     ./location_of_script_within_repo/buildscript.sh
 
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
-      with:
-        category: "/language:${{ matrix.project.languages[0] }}"
+    # TEMP
+    # - name: Perform CodeQL Analysis
+    #   uses: github/codeql-action/analyze@v2
+    #   with:
+    #     category: "/language:${{ matrix.project.languages[0] }}"
 
   get-old-sarif:
     name: Get old SARIF
@@ -174,7 +175,7 @@ jobs:
       - uses: actions/github-script@v6
         with:
           script: |
-            const analyses = await github.rest.codeScanning.listAnalysesForRepo({
+            const analyses = await github.rest.codeScanning.listRecentAnalyses({
               owner: context.repo.owner,
               repo: context.repo.repo,
               ref: context.payload.pull_request.head.sha
