@@ -156,21 +156,20 @@ jobs:
       - name: Autobuild
         uses: github/codeql-action/autobuild@v2
 
-    # ℹ️ Command-line programs to run using the OS shell.
-    # 📚 See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
+      # ℹ️ Command-line programs to run using the OS shell.
+      # 📚 See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
 
-    #   If the Autobuild fails above, remove it and uncomment the following three lines.
-    #   modify them (or add more) to build your code if your project, please refer to the EXAMPLE below for guidance.
+      #   If the Autobuild fails above, remove it and uncomment the following three lines.
+      #   modify them (or add more) to build your code if your project, please refer to the EXAMPLE below for guidance.
 
-    # - run: |
-    #     echo "Run, Build Application using script"
-    #     ./location_of_script_within_repo/buildscript.sh
+      # - run: |
+      #     echo "Run, Build Application using script"
+      #     ./location_of_script_within_repo/buildscript.sh
 
-    # TEMP
-    # - name: Perform CodeQL Analysis
-    #   uses: github/codeql-action/analyze@v2
-    #   with:
-    #     category: "/language:${{ matrix.project.languages[0] }}"
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+        with:
+          category: "/language:${{ matrix.project.languages[0] }}"
 
   get-old-sarif:
     name: Get old SARIF
@@ -193,14 +192,14 @@ jobs:
               repo: context.repo.repo,
               ref: context.payload.pull_request.base.ref
             });
-            
+
             const analysesToDownload = notScannedLanguages.map((language) =>
               analyses.data.find((analysis) => {
                 const analysisLanguage = analysis.category.split(':')[1] || ''
                 return analysisLanguage === language;
               })
             )
-            
+
             fs.mkdirSync('sarif');
             analysesToDownload.forEach(async (analysis) => {
               if (analysis) {
