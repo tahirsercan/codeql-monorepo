@@ -83,7 +83,7 @@ jobs:
           return {
             projects: changes.map((change) => {
               return {
-                language: Object.entries(config).filter(([language, paths]) => paths.includes(change)),
+                language: Object.entries(config).filter(([language, paths]) => paths.includes(change).map(([language]) => language),
                 path: change
               }
             }),
