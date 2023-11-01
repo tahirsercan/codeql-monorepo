@@ -194,23 +194,27 @@ jobs:
 
             console.log(analyses.data)
 
-            notScannedLanguages.map((language) =>
+            const analysesToDownload = notScannedLanguages.map((language) =>
               analyses.data.find((analysis) => {
                 cont analysisLanguage = analysis.category.split(':')[1]
                 return analysisLanguage === language;
               })
             )
 
-            const sarif = await github.rest.codeScanning.getAnalysis({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              analysis_id: analysis.id,
-              headers: {
-                Accept: 'application/sarif+json'
+            analysesToDownload.forEach((analysis) => {
+              if (analysis) {
+                console.log(analysis)
+                const sarif = await github.rest.codeScanning.getAnalysis({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  analysis_id: analysis.id,
+                  headers: {
+                    Accept: 'application/sarif+json'
+                  }
+                });
+                console.log(JSON.stringify(sarif));
               }
-            });
-
-            console.log(JSON.stringify(sarif));
+            })
 
   skip-codeql-check:
     name: Skip CodeQL check
