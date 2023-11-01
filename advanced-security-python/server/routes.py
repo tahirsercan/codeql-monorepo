@@ -15,9 +15,6 @@ def index():
         cursor.execute(
             "SELECT * FROM books WHERE name LIKE '%" + name + "%'"
         )
-        cursor.execute(
-            "SELECT * FROM books WHERE name LIKE '%" + name + "%'"
-        )
         books = [Book(*row) for row in cursor]
 
     elif author:
@@ -31,3 +28,4 @@ def index():
         books = [Book(*row) for row in cursor]
 
     return render_template('books.html', books=books)
+
