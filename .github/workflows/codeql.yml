@@ -212,30 +212,10 @@ jobs:
                   }
                 });
                 const filename = `${analysis.category}.sarif`
+                fs.mkdirSync('sarif');
                 fs.writeFileSync(`sarif/$filename`, JSON.stringify(sarif.data));
               }
             })
       - uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: sarif
-
-  skip-codeql-check:
-    name: Skip CodeQL check
-    runs-on: ubuntu-latest
-    needs: analyze
-    if: github.event_name == 'pull_request'
-    steps:
-      - uses: actions/github-script@v6
-        with:
-          script: |
-            const paramObj = {
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              sha: context.payload.pull_request.head.sha,
-              state: 'success',
-              description: "CodeQL analysis good",
-              context: "CodeQL"
-            };
-            console.log(paramObj);
-            const result = await github.rest.repos.createCommitStatus(paramObj);
-            console.log(result);
