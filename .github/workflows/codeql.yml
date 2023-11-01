@@ -43,6 +43,10 @@ jobs:
             - 'advanced-security-java/**'
           advanced-security-javascript:
             - 'advanced-security-javascript/**'
+          advanced-security-ruby:
+            - 'advanced-security-ruby/**'
+          advanced-security-swift:
+            - 'advanced-security-swift/**'
     - uses: actions/github-script@v6
       id: build-languages
       env:
