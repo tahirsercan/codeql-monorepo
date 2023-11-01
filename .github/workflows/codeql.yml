@@ -203,7 +203,6 @@ jobs:
             
             analysesToDownload.forEach(async (analysis) => {
               if (analysis) {
-                console.log(analysis)
                 const sarif = await github.rest.codeScanning.getAnalysis({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
@@ -212,7 +211,7 @@ jobs:
                     Accept: 'application/sarif+json'
                   }
                 });
-                console.log(JSON.stringify(sarif));
+                console.log(JSON.stringify(sarif, null, 2));
               }
             })
 
