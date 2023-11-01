@@ -177,7 +177,7 @@ jobs:
             const analyses = await github.rest.codeScanning.listRecentAnalyses({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: context.payload.pull_request.head.sha
+              ref: context.payload.pull_request.base.ref
             });
 
             console.log(analyses.data);
