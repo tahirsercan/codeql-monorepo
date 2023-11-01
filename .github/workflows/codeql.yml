@@ -182,7 +182,7 @@ jobs:
 
             console.log(analyses.data);
 
-            const analysis = analyses.data.analyses[0];
+            const analysis = analyses.data[0];
 
             const sarif = await github.rest.codeScanning.getAnalysis({
               owner: context.repo.owner,
