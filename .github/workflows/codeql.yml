@@ -210,7 +210,7 @@ jobs:
               }
             });
 
-            console.log(sarif);
+            console.log(JSON.stringify(sarif));
 
   skip-codeql-check:
     name: Skip CodeQL check
