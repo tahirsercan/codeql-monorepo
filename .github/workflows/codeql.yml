@@ -81,14 +81,23 @@ jobs:
             'c-cpp': [],
           }
           
+          const projects = changes.map((change) => {
+            return {
+              languages: Object.entries(config).filter(([language, paths]) => paths.includes(change)).map(([language]) => language),
+              path: change
+            }
+          });
           return {
-            projects: changes.map((change) => {
-              return {
-                languages: Object.entries(config).filter(([language, paths]) => paths.includes(change)).map(([language]) => language),
-                path: change
-              }
-            }),
+            projects,
             length: changes.length
+            languages: projects.reduce((acc, project) => {
+              project.languages.forEach((language) => {
+                if (!acc.includes(language)) {
+                  acc.push(language)
+                }
+              })
+              return acc
+            }, []);
           }
 
   analyze:
@@ -169,11 +178,16 @@ jobs:
   get-old-sarif:
     name: Get old SARIF
     runs-on: ubuntu-latest
+    needs: changes
     if: github.event_name == 'pull_request'
     steps:
       - uses: actions/github-script@v6
+        env:
+          languages: ${{ fromJson(needs.changes.outputs.projects).languages }}
         with:
           script: |
+            console.log(process.env.languages)
+            const languages = [ 'c-cpp', 'csharp', 'go', 'javascript-typescript', 'python', 'ruby', 'swift', 'java-kotlin']
             const analyses = await github.rest.codeScanning.listRecentAnalyses({
               owner: context.repo.owner,
               repo: context.repo.repo,
