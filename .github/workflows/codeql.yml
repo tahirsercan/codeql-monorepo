@@ -181,7 +181,7 @@ jobs:
     steps:
       - uses: actions/github-script@v6
         env:
-          languages: ${{ fromJson(fromJson(needs.changes.outputs.projects).languages) }}
+          languages: ${{ fromJson(needs.changes.outputs.projects).languages }}
         with:
           script: |
             console.log(process.env.languages)
