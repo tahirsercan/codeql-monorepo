@@ -185,6 +185,7 @@ jobs:
         with:
           script: |
             console.log(process.env.languages)
+            console.log(JSON.parse(process.env.languages))
             const languages = [ 'c-cpp', 'csharp', 'go', 'javascript-typescript', 'python', 'ruby', 'swift', 'java-kotlin']
             const analyses = await github.rest.codeScanning.listRecentAnalyses({
               owner: context.repo.owner,
