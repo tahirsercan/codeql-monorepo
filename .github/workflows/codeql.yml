@@ -73,20 +73,17 @@ jobs:
             javascript: [
               'advanced-security-javascript'
             ],
-            typescript: [
-              'advanced-security-typescript'
-            ],
             ruby: [
               'advanced-security-ruby'
             ],
             swift: [],
             'c-cpp': [],
           }
-
+          
           return {
             projects: changes.map((change) => {
               return {
-                language: Object.entries(config).filter([language, paths] => paths.includes(change)),
+                language: Object.entries(config).filter(([language, paths]) => paths.includes(change)),
                 path: change
               }
             }),
