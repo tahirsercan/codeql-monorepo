@@ -183,6 +183,8 @@ jobs:
           languages: ${{ toJson(fromJson(needs.changes.outputs.projects).languages) }}
         with:
           script: |
+            const fs = require('fs');
+
             const languages = ['c-cpp', 'csharp', 'go', 'javascript-typescript', 'python', 'ruby', 'swift', 'java-kotlin']
             const scannedLanguages = JSON.parse(process.env.languages)
             const notScannedLanguages = languages.filter((language) => !scannedLanguages.includes(language))
@@ -209,9 +211,13 @@ jobs:
                     Accept: 'application/sarif+json'
                   }
                 });
-                console.log(JSON.stringify(sarif, null, 2));
+                const filename = `${analysis.category}.sarif`
+                fs.writeFileSync(`sarif/$filename`, JSON.stringify(sarif.data));
               }
             })
+      - uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: sarif
 
   skip-codeql-check:
     name: Skip CodeQL check
