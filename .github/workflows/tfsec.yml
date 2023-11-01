@@ -3,8 +3,12 @@ name: TFSec
 on:
   push:
     branches: [ master, main ]
+    paths:
+      - 'advanced-security-terraform/**'
   pull_request:
     branches: [ master, main ]
+    paths:
+      - 'advanced-security-terraform/**'
 
 jobs:
   tfsec:
