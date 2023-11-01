@@ -212,8 +212,7 @@ jobs:
                     Accept: 'application/sarif+json'
                   }
                 });
-                const filename = `${analysis.category}.sarif`
-                fs.writeFileSync(`sarif/$filename`, JSON.stringify(sarif.data));
+                fs.writeFileSync(`sarif/${analysis.category}.sarif`, JSON.stringify(sarif.data));
               }
             })
       - uses: github/codeql-action/upload-sarif@v2
