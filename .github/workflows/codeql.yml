@@ -181,15 +181,20 @@ jobs:
               ref: context.payload.pull_request.head.sha
             });
 
+            console.log(analyses.data);
+
             const analysis = analyses.data.analyses[0];
 
             const sarif = await github.rest.codeScanning.getAnalysis({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              analysis_id: analysis.id
+              analysis_id: analysis.id,
+              headers: {
+                Accept: 'application/sarif+json'
+              }
             });
 
-            console.log(sarif.data);
+            console.log(sarif);
             
 
   skip-codeql-check:
