@@ -201,6 +201,7 @@ jobs:
               })
             )
             
+            fs.mkdirSync('sarif');
             analysesToDownload.forEach(async (analysis) => {
               if (analysis) {
                 const sarif = await github.rest.codeScanning.getAnalysis({
@@ -212,7 +213,6 @@ jobs:
                   }
                 });
                 const filename = `${analysis.category}.sarif`
-                fs.mkdirSync('sarif');
                 fs.writeFileSync(`sarif/$filename`, JSON.stringify(sarif.data));
               }
             })
