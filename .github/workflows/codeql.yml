@@ -87,7 +87,7 @@ jobs:
           });
           return {
             projects,
-            length: changes.length
+            length: changes.length,
             languages: projects.reduce((acc, project) => {
               project.languages.forEach((language) => {
                 if (!acc.includes(language)) {
@@ -95,7 +95,7 @@ jobs:
                 }
               })
               return acc
-            }, []);
+            }, [])
           }
 
   analyze:
