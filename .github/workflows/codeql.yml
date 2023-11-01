@@ -13,12 +13,12 @@ name: "CodeQL"
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [ "main" ]
+    branches: ["main"]
   schedule:
-    - cron: '39 18 * * 6'
+    - cron: "39 18 * * 6"
 
 jobs:
   changes:
@@ -28,68 +28,74 @@ jobs:
     outputs:
       projects: ${{ steps.build-languages.outputs.result }}
     steps:
-    - uses: actions/checkout@v3
-    - uses: dorny/paths-filter@v2
-      id: filter
-      with:
-        filters: |
-          advanced-security-csharp:
-            - 'advanced-security-csharp/**'
-          advanced-security-go:
-            - 'advanced-security-go/**'
-          advanced-security-python:
-            - 'advanced-security-python/**'
-          advanced-security-java:
-            - 'advanced-security-java/**'
-          advanced-security-javascript:
-            - 'advanced-security-javascript/**'
-          advanced-security-ruby:
-            - 'advanced-security-ruby/**'
-          advanced-security-swift:
-            - 'advanced-security-swift/**'
-    - uses: actions/github-script@v6
-      id: build-languages
-      env:
-        filter: ${{ toJson(steps.filter.outputs) }}
-      with:
-        script: |
-          const projects = [];
-          const filter = JSON.parse(process.env.filter)
-          const changes = JSON.parse(filter.changes)
-          console.log(filter)
-          console.log(changes)
-          const config = {
-            go: [
-              'advanced-security-go'
-            ],
-            python: [
-              'advanced-security-python'
-            ],
-            csharp: [
-              'advanced-security-csharp'
-            ],
-            java: [
-              'advanced-security-java'
-            ],
-            javascript: [
-              'advanced-security-javascript'
-            ],
-            ruby: [
-              'advanced-security-ruby'
-            ],
-            swift: [],
-            'c-cpp': [],
-          }
-          
-          return {
-            projects: changes.map((change) => {
+      - uses: actions/checkout@v3
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            advanced-security-csharp:
+              - 'advanced-security-csharp/**'
+            advanced-security-go:
+              - 'advanced-security-go/**'
+            advanced-security-python:
+              - 'advanced-security-python/**'
+            advanced-security-java:
+              - 'advanced-security-java/**'
+            advanced-security-javascript:
+              - 'advanced-security-javascript/**'
+            advanced-security-ruby:
+              - 'advanced-security-ruby/**'
+            advanced-security-swift:
+              - 'advanced-security-swift/**'
+      - uses: actions/github-script@v6
+        id: build-languages
+        env:
+          filter: ${{ toJson(steps.filter.outputs) }}
+        with:
+          script: |
+            const filter = JSON.parse(process.env.filter)
+            const changes = JSON.parse(filter.changes)
+            const config = {
+              go: [
+                'advanced-security-go'
+              ],
+              python: [
+                'advanced-security-python'
+              ],
+              csharp: [
+                'advanced-security-csharp'
+              ],
+              java: [
+                'advanced-security-java'
+              ],
+              javascript: [
+                'advanced-security-javascript'
+              ],
+              ruby: [
+                'advanced-security-ruby'
+              ],
+              swift: [],
+              'c-cpp': [],
+            }
+
+            const projects = changes.map((change) => {
               return {
                 languages: Object.entries(config).filter(([language, paths]) => paths.includes(change)).map(([language]) => language),
                 path: change
               }
-            }),
-            length: changes.length
-          }
+            });
+            return {
+              projects,
+              length: changes.length,
+              languages: projects.reduce((acc, project) => {
+                project.languages.forEach((language) => {
+                  if (!acc.includes(language)) {
+                    acc.push(language)
+                  }
+                })
+                return acc
+              }, [])
+            }
 
   analyze:
     name: Analyze
@@ -117,51 +123,94 @@ jobs:
         # Learn more about CodeQL language support at https://aka.ms/codeql-docs/language-support
 
     steps:
-    - name: Print
-      run: echo "${{ toJson(matrix.project.languages) }}"
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          sparse-checkout: ${{ matrix.project.path }}
 
-    - name: Checkout repository
-      uses: actions/checkout@v3
-      with:
-        sparse-checkout: ${{ matrix.project.path }}
+      # Initializes the CodeQL tools for scanning.
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: ${{ join(matrix.project.languages, ',') }}
+          # The "paths"/"paths-ignore" fields of the config only have effect for JavaScript, Python, and Ruby
+          config: |
+            paths:
+              - '${{ matrix.project.path }}'
+          # If you wish to specify custom queries, you can do so here or in a config file.
+          # config-file: ${{ matrix.project.path }}/.github/codeql-config.yml
 
-    # Initializes the CodeQL tools for scanning.
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
-      with:
-        languages: ${{ join(matrix.project.languages, ',') }}
-        # The "paths"/"paths-ignore" fields of the config only have effect for JavaScript, Python, and Ruby
-        config: |
-          paths:
-            - '${{ matrix.project.path }}'
-        # If you wish to specify custom queries, you can do so here or in a config file.
-        # config-file: ${{ matrix.project.path }}/.github/codeql-config.yml
+          # If you wish to specify custom queries, you can do so here or in a config file.
+          # By default, queries listed here will override any specified in a config file.
+          # Prefix the list here with "+" to use these queries and those in the config file.
 
-        # If you wish to specify custom queries, you can do so here or in a config file.
-        # By default, queries listed here will override any specified in a config file.
-        # Prefix the list here with "+" to use these queries and those in the config file.
+          # For more details on CodeQL's query packs, refer to: https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/configuring-code-scanning#using-queries-in-ql-packs
+          # queries: security-extended,security-and-quality
 
-        # For more details on CodeQL's query packs, refer to: https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/configuring-code-scanning#using-queries-in-ql-packs
-        # queries: security-extended,security-and-quality
+      # Autobuild attempts to build any compiled languages (C/C++, C#, Go, Java, or Swift).
+      # If this step fails, then you should remove it and run the build manually (see below)
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v2
 
+      # ℹ️ Command-line programs to run using the OS shell.
+      # 📚 See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
 
-    # Autobuild attempts to build any compiled languages (C/C++, C#, Go, Java, or Swift).
-    # If this step fails, then you should remove it and run the build manually (see below)
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v2
+      #   If the Autobuild fails above, remove it and uncomment the following three lines.
+      #   modify them (or add more) to build your code if your project, please refer to the EXAMPLE below for guidance.
 
-    # ℹ️ Command-line programs to run using the OS shell.
-    # 📚 See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
+      # - run: |
+      #     echo "Run, Build Application using script"
+      #     ./location_of_script_within_repo/buildscript.sh
 
-    #   If the Autobuild fails above, remove it and uncomment the following three lines.
-    #   modify them (or add more) to build your code if your project, please refer to the EXAMPLE below for guidance.
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+        with:
+          category: "/language:${{ matrix.project.languages[0] }}"
 
-    # - run: |
-    #     echo "Run, Build Application using script"
-    #     ./location_of_script_within_repo/buildscript.sh
+  get-old-sarif:
+    name: Republishing old missing SARIF files
+    runs-on: ubuntu-latest
+    needs: changes
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/github-script@v6
+        env:
+          languages: ${{ toJson(fromJson(needs.changes.outputs.projects).languages) }}
+        with:
+          script: |
+            const fs = require('fs');
 
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
-      with:
-        category: "/language:${{ matrix.project.languages[0] }}"
+            const languages = ['c-cpp', 'csharp', 'go', 'javascript-typescript', 'javascript', 'python', 'ruby', 'swift', 'java', 'java-kotlin', '']
+            const scannedLanguages = JSON.parse(process.env.languages)
+            const notScannedLanguages = languages.filter((language) => !scannedLanguages.includes(language))
+            const analyses = await github.rest.codeScanning.listRecentAnalyses({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.payload.pull_request.base.ref
+            });
 
+            const analysesToDownload = notScannedLanguages.map((language) =>
+              analyses.data.find((analysis) => {
+                const analysisLanguage = analysis.category.split(':')[1] || ''
+                return analysisLanguage === language;
+              })
+            )
+
+            fs.mkdirSync('sarif');
+            analysesToDownload.forEach(async (analysis) => {
+              if (analysis) {
+                const sarif = await github.rest.codeScanning.getAnalysis({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  analysis_id: analysis.id,
+                  headers: {
+                    Accept: 'application/sarif+json'
+                  }
+                });
+                fs.writeFileSync(`sarif/${analysis.category}.sarif`, JSON.stringify(sarif.data));
+                console.log(`Downloaded SARIF for ${analysis.category}`);
+              }
+            })
+      - uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: sarif
