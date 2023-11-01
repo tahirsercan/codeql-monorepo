@@ -26,9 +26,6 @@ jobs:
     permissions:
       pull-requests: read
     outputs:
-      advanced-security-csharp: ${{ steps.filter.outputs.advanced-security-csharp }}
-      advanced-security-go: ${{ steps.filter.outputs.advanced-security-go }}
-      advanced-security-python: ${{ steps.filter.outputs.advanced-security-python }}
       projects: ${{ steps.build-languages.outputs.result }}
     steps:
     - uses: actions/checkout@v3
@@ -83,7 +80,7 @@ jobs:
           return {
             projects: changes.map((change) => {
               return {
-                language: Object.entries(config).filter(([language, paths]) => paths.includes(change)).map(([language]) => language),
+                languages: Object.entries(config).filter(([language, paths]) => paths.includes(change)).map(([language]) => language),
                 path: change
               }
             }),
@@ -159,5 +156,5 @@ jobs:
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
       with:
-        category: "/language:${{matrix.language}}"
+        category: "/language:${{ matrix.project.languages[0] }}"
 
