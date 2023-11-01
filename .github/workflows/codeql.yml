@@ -183,7 +183,7 @@ jobs:
           languages: ${{ toJson(fromJson(needs.changes.outputs.projects).languages) }}
         with:
           script: |
-            const languages = [ 'c-cpp', 'csharp', 'go', 'javascript-typescript', 'python', 'ruby', 'swift', 'java-kotlin']
+            const languages = ['c-cpp', 'csharp', 'go', 'javascript-typescript', 'python', 'ruby', 'swift', 'java-kotlin']
             const scannedLanguages = JSON.parse(process.env.languages)
             const notScannedLanguages = languages.filter((language) => !scannedLanguages.includes(language))
             const analyses = await github.rest.codeScanning.listRecentAnalyses({
@@ -191,17 +191,17 @@ jobs:
               repo: context.repo.repo,
               ref: context.payload.pull_request.base.ref
             });
-
+            
             console.log(analyses.data)
-
+            
             const analysesToDownload = notScannedLanguages.map((language) =>
               analyses.data.find((analysis) => {
-                cont analysisLanguage = analysis.category.split(':')[1]
+                const analysisLanguage = analysis.category.split(':')[1]
                 return analysisLanguage === language;
               })
             )
-
-            analysesToDownload.forEach((analysis) => {
+            
+            analysesToDownload.forEach(async (analysis) => {
               if (analysis) {
                 console.log(analysis)
                 const sarif = await github.rest.codeScanning.getAnalysis({
