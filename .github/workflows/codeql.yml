@@ -83,17 +83,14 @@ jobs:
             'c-cpp': [],
           }
 
-          changes.map((change) => {
-            const languages = Object.keys(config).filter(key => config[key].includes(path))
-            projects.push({
-              languages,
-              path
-            })
-          })
-
           return {
-            projects,
-            length: Object.keys(projects).length
+            projects: changes.map((change) => {
+              return {
+                language: Object.entries(config).filter([language, paths] => paths.includes(change)),
+                path: change
+              }
+            }),
+            length: changes.length
           }
 
   analyze:
