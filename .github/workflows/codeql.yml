@@ -53,11 +53,9 @@ jobs:
         filter: ${{ toJson(steps.filter.outputs) }}
       with:
         script: |
-          const projects = [];
           const filter = JSON.parse(process.env.filter)
           const changes = JSON.parse(filter.changes)
           console.log(filter)
-          console.log(changes)
           const config = {
             go: [
               'advanced-security-go'
