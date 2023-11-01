@@ -192,8 +192,6 @@ jobs:
               ref: context.payload.pull_request.base.ref
             });
             
-            console.log(analyses.data)
-            
             const analysesToDownload = notScannedLanguages.map((language) =>
               analyses.data.find((analysis) => {
                 const analysisLanguage = analysis.category.split(':')[1]
