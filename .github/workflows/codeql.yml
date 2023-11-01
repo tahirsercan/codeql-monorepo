@@ -185,7 +185,7 @@ jobs:
           script: |
             const fs = require('fs');
 
-            const languages = ['c-cpp', 'csharp', 'go', 'javascript-typescript', 'javascript', 'python', 'ruby', 'swift', 'java', 'java-kotlin']
+            const languages = ['c-cpp', 'csharp', 'go', 'javascript-typescript', 'javascript', 'python', 'ruby', 'swift', 'java', 'java-kotlin', '']
             const scannedLanguages = JSON.parse(process.env.languages)
             const notScannedLanguages = languages.filter((language) => !scannedLanguages.includes(language))
             const analyses = await github.rest.codeScanning.listRecentAnalyses({
@@ -196,7 +196,7 @@ jobs:
             
             const analysesToDownload = notScannedLanguages.map((language) =>
               analyses.data.find((analysis) => {
-                const analysisLanguage = analysis.category.split(':')[1]
+                const analysisLanguage = analysis.category.split(':')[1] || ''
                 return analysisLanguage === language;
               })
             )
