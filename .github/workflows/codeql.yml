@@ -55,7 +55,6 @@ jobs:
           script: |
             const filter = JSON.parse(process.env.filter)
             const changes = JSON.parse(filter.changes)
-            console.log(filter)
             const config = {
               go: [
                 'advanced-security-go'
